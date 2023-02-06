@@ -1,0 +1,77 @@
+// Import required libraries
+const express = require('express');
+const cors = require('cors');
+const HederaClient = require('hedera-client');
+
+// Initialize the express app
+const app = express();
+app.use(cors());
+
+// Initialize the HederaClient with the required parameters
+const hederaClient = new HederaClient({
+    operator: {
+        accountID: '0.0.xxx',
+        privateKey: '302e020100300506032b657004220420xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+    },
+    network: 'testnet'
+});
+
+// Define the endpoint for transferring credits to separate entities
+app.post('/transfer', async (req, res) => {
+    const { to, amount } = req.body;
+
+    // Call the transfer function from the smart contract
+    const result = await hederaClient.contractCall({
+        contractId: '0.0.xxx',
+        functionName: 'transfer',
+        params: {
+            to: to,
+            amount: amount
+        }
+    });
+
+    // Return the result to the client
+    return res.json({ result });
+});
+
+// Define the endpoint for bidding on credits and excess energy
+app.post('/bid', async (req, res) => {
+    const { bidAmount, creditType } = req.body;
+
+    // Call the bid function from the smart contract
+    const result = await hederaClient.contractCall({
+        contractId: '0.0.xxx',
+        functionName: 'bid',
+        params: {
+            bidAmount: bidAmount,
+            creditType: creditType
+        }
+    });
+
+    // Return the result to the client
+    return res.json({ result });
+});
+
+// Define the endpoint for negotiating for better pricing
+app.post('/negotiate', async (req, res) => {
+    const { buyer, seller, price } = req.body;
+
+    // Call the negotiate function from the smart contract
+    const result = await hederaClient.contractCall({
+        contractId: '0.0.xxx',
+        functionName: 'negotiate',
+        params: {
+            buyer: buyer,
+            seller: seller,
+            price: price
+        }
+    });
+
+    // Return the result to the client
+    return res.json({ result });
+});
+
+// Start the express app on the desired port
+app.listen(3000, () => {
+    console.log('API running on port 3000');
+});
